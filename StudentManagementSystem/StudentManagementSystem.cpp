@@ -128,10 +128,19 @@ void StudentManagementSystem::sortStudents() {
 }
 
 void StudentManagementSystem::updateStudent(int iroll) {
+	cout << "===========================================================" << endl;
+	cout << "Enter the Student Details: " << endl;
+	cout << "===========================================================" << endl;
+	bool found = false;
 	for (Student& student : students) {
 		if (student.roll == iroll) {
 			student.updateStudentDetails();
+			found = true;
 		}
+	}
+	if (!found) {
+		system("cls");
+		cout << "Student not found..." << endl;
 	}
 }
 
