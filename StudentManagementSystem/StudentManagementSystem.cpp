@@ -101,10 +101,9 @@ void StudentManagementSystem::searchStudent(int iroll) {
 			found = true;
 		}
 	}
-	if (found = false) {
+	if (!found){
 		cout << "Student was not found.." << endl;
 	}
-
 }
 
 void StudentManagementSystem::deleteStudent(int iroll) {
