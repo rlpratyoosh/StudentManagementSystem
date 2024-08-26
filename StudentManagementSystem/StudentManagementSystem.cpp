@@ -2,16 +2,17 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 using namespace std;
 
 class Student {
-protected:
+public:
 	string name;
 	string studentClass;
 	double marks[5];
 	double totalMarks = 0;
 	double percentage;
-public:
 	vector<string> Subject = { "Physics", "Maths", "Chemistry", "English", "Painting" };
 	int roll;
 	void addStudentDetails();
@@ -72,6 +73,8 @@ public:
 	void searchStudent(int);
 	void deleteStudent(int);
 	void sortStudents();
+	void saveToFile(const string&);
+	void loadFromFile(const string&);
 };
 
 void StudentManagementSystem::addStudent() {
@@ -143,6 +146,75 @@ void StudentManagementSystem::updateStudent(int iroll) {
 	}
 }
 
+void StudentManagementSystem::saveToFile(const string& filename) {
+	ofstream out(filename);
+	if (!out) {
+		cout << "File not Found" << endl;
+		return;
+	}
+	for (Student& student : students) {
+		out << student.name << ","
+			<< student.roll << ","
+			<< student.studentClass << ","
+			<< student.totalMarks << ","
+			<< student.percentage << ",";
+		for (int i = 0; i < 5; i++) {
+			out << student.marks[i];
+			if (i < 4) {
+				out << ",";
+			}
+		}
+		out << endl;
+	}
+	out.close();
+	cout << "File Saved to " << filename << endl;
+}
+
+void StudentManagementSystem::loadFromFile(const string& filename) {
+	ifstream in(filename);
+	if (!in) {
+		cout << "Failed to Load the File" << endl;
+		return;
+	}
+	students.clear();
+	string line;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		string name, StudentClass;
+		int roll;
+		double Marks[5], TotalMarks, Percentage;
+
+		getline(ss, name, ',');
+		ss >> roll;
+		ss.ignore();
+		getline(ss, StudentClass, ',');
+		ss >> TotalMarks;
+		ss.ignore();
+		ss >> Percentage;
+		ss.ignore();
+
+		Student s;
+		s.name = name;
+		s.roll = roll;
+		s.studentClass = StudentClass;
+		s.totalMarks = TotalMarks;
+		s.percentage = Percentage;
+
+		for (int i = 0; i < 5; i++) {
+			ss >> Marks[i];
+			if (i < 4) ss.ignore();
+		}
+
+		for (int i = 0; i < 5; i++) {
+			s.marks[i] = Marks[i];
+		}
+
+		students.push_back(s);
+	}
+	in.close();
+	cout << "File loaded from " << filename << endl;
+}
+
 int main() {
 	StudentManagementSystem sms;
 start:
@@ -156,7 +228,9 @@ start:
 		<< "4. Search a Student" << endl
 		<< "5. Delete a Student" << endl
 		<< "6. Sort Students" << endl
-		<< "7. End" << endl;
+		<< "7. Save Data" << endl
+		<< "8. Load Data" << endl
+		<< "9. End" << endl;
 	cout << "===============================================================" << endl;
 	int op1;
 	cin >> op1;
@@ -309,6 +383,54 @@ start:
 	}
 
 	else if (op1 == 7) {
+		system("cls");
+		sms.saveToFile("students_data.txt");
+		int op2;
+		cout << "===========================================================" << endl;
+		cout << "Choose : " << endl
+			<< "1. Go Back" << endl
+			<< "2. Quit the Portal" << endl;
+		cout << "===========================================================" << endl;
+		cin >> op2;
+		if (op2 == 1) {
+			system("cls");
+			goto start;
+		}
+		else if (op2 == 2) {
+			system("cls");
+			goto end;
+		}
+		else {
+			system("cls");
+			cout << "Wrong Input.. Ending By Default" << endl;
+		}
+	}
+
+	else if (op1 == 8) {
+		system("cls");
+		sms.loadFromFile("students_data.txt");
+		int op2;
+		cout << "===========================================================" << endl;
+		cout << "Choose : " << endl
+			<< "1. Go Back" << endl
+			<< "2. Quit the Portal" << endl;
+		cout << "===========================================================" << endl;
+		cin >> op2;
+		if (op2 == 1) {
+			system("cls");
+			goto start;
+		}
+		else if (op2 == 2) {
+			system("cls");
+			goto end;
+		}
+		else {
+			system("cls");
+			cout << "Wrong Input.. Ending By Default" << endl;
+		}
+	}
+
+	else if (op1 == 9) {
 		system("cls");
 		goto end;
 	}
